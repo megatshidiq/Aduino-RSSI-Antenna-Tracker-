@@ -1,0 +1,35 @@
+float rssi_input = A0;
+int analog_rssi_value;
+int peratus_rssi;
+
+
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+pinMode (8, OUTPUT);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+
+analog_rssi_value = analogRead(rssi_input); //Values analog bagi 5V adalah 1023
+if(analog_rssi_value<200)
+{
+ Serial.print("low wehh: ");
+ Serial.print(analog_rssi_value);
+  
+ digitalWrite(8, HIGH); 
+}
+else
+{
+   //Serial.print("signal ok");
+   Serial.print("signal ok: ");
+   Serial.print(analog_rssi_value);
+   digitalWrite(8, LOW); 
+}
+ Serial.print("\n");
+
+delay(1000); // delay bagi tujuan test
+}
