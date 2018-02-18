@@ -1,18 +1,83 @@
+#include <EEPROM.h>
+#include <Servo.h>
+
+
+Servo myservo;
+
 float rssi_input = A0;
+int start_signal_button= A1;
+int start_signal= 0;
+
 int analog_rssi_value;
 int peratus_rssi;
+int addr;
+int pos = 90; // Degrees servo
+byte value;
+int analogINvalue_max=900;
+int analogINvalue_min=20;
+float analogTOdigital_CAL = 0.25;
+float digitalTOAnalog_CAL = 4.01;
+//-------------------------
+
+float valueToEPROM_MAX = (analogINvalue_max*(analogTOdigital_CAL));
+int valueToEPROM_MIN = (analogINvalue_min*(analogTOdigital_CAL));
 
 
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
-pinMode (8, OUTPUT);
+pinMode (8, OUTPUT); // output buzzer
+myservo.attach(7);
+/*
+addr = 0; // address start di EEPROM
+EEPROM.update(addr, valueToEPROM_MAX);
+addr = 1; // address start di EEPROM
+EEPROM.update(addr, valueToEPROM_MIN);
+*/
 
+
+do
+{
+
+    digitalWrite(8, HIGH);
+    delay(300); 
+    digitalWrite(8, LOW);
+    delay(300); 
+    Serial.print("PROGRAM START- SILA TEKAN BUTANG MULA\n");
+    
+      
+   int  start_signal_button_check=analogRead(start_signal_button);
+    Serial.print(start_signal_button_check);
+    if(start_signal_button_check>900)
+    {
+      start_signal=1;
+    }
+
+    delay(5000);
+} while (start_signal==0);
+ 
+delay(3000); 
+digitalWrite(8, HIGH);
+delay(300); 
+digitalWrite(8, LOW);
+delay(300); 
+digitalWrite(8, HIGH);
+delay(300); 
+digitalWrite(8, LOW);
+delay(300);
+digitalWrite(8, HIGH);
+delay(300);
+digitalWrite(8, LOW);
+delay(300);
+digitalWrite(8, HIGH);
+delay(800);   
+digitalWrite(8, LOW);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
+myservo.write(pos);
 
 analog_rssi_value = analogRead(rssi_input); //Values analog bagi 5V adalah 1023
 if(analog_rssi_value<200)
@@ -24,12 +89,19 @@ if(analog_rssi_value<200)
 }
 else
 {
-   //Serial.print("signal ok");
+ 
    Serial.print("signal ok: ");
    Serial.print(analog_rssi_value);
    digitalWrite(8, LOW); 
 }
+
  Serial.print("\n");
+
+value = EEPROM.read(0);
+
+  Serial.print(EEPROM.read(0)*digitalTOAnalog_CAL);
+ Serial.print(" : ");
+  Serial.print(EEPROM.read(1)*digitalTOAnalog_CAL);
 
 delay(1000); // delay bagi tujuan test
 }
